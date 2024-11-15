@@ -58,7 +58,7 @@ int main() {
 	int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 
 	char buffer[BUFFER_SIZE];
-	while(read(client_fd, buffer, BUFFER_SIZE) != 0){
+	while(read(client_fd, buffer, BUFFER_SIZE)){
 		write(client_fd, "+PONG\r\n", sizeof("+PONG\r\n"));
 	}
 	
