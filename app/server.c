@@ -92,8 +92,12 @@ int main() {
 			perror("Failed to accept client");
 			continue;
 		}
-		thread_args[thread_count] = client_fd;
-		pthread_create(&thread_id, NULL, handle_client, *client_fd);
+
+		int* client_fd_ptr = malloc(sizeof(int));
+		*client_fd_ptr = client_fd;
+
+		// Create new thread for client
+		pthread_create(&thread_id, NULL, handle_client, client_fd_ptr);
 		thread_count++;
 		if(thread_count >= 5) break;
 	}
