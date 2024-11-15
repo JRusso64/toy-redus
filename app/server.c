@@ -10,12 +10,14 @@
 
 #define BUFFER_SIZE 1024
 
-void* handle_client(int client_fd){
+void* handle_client(void* client_fd_ptr){
+	int client_fd = *((int*)client_fd_ptr)
 	char buffer[BUFFER_SIZE];
 	char *message = "+PONG\r\n";
 	while(read(client_fd, buffer, 1024)) {
     	send(client_fd, message, strlen(message), 0);
 	}
+	close(client_fd);
 	return NULL;
 }
 
@@ -84,7 +86,12 @@ int main() {
 				return 1;
 			}
 		}
+		// Accept new client
 		int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+		if(client_fd == -1){
+			perror("Failed to accept client");
+			continue;
+		}
 		thread_args[thread_count] = client_fd;
 		pthread_create(&thread_id, NULL, handle_client, *client_fd);
 		thread_count++;
