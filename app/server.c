@@ -86,7 +86,7 @@ int main() {
 		}
 		int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 		thread_args[thread_count] = client_fd;
-		pthread_create(&thread_id, NULL, handle_client, client_fd)
+		pthread_create(&thread_id, NULL, handle_client, *client_fd);
 		thread_count++;
 		if(thread_count >= 5) break;
 	}
