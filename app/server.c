@@ -54,16 +54,12 @@ int main() {
 	client_addr_len = sizeof(client_addr);
 	
 	int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+
 	char buffer[1024];
-	int bytes_received;
-
-	memset(buffer, 0, sizeof(buffer));
-	bytes_received = recv(client_fd, buffer, sizeof(buffer)-1, 0);
-
-	for(int i = 0; i < 1; i++){
+	while(read(client_fd, buffer, sizeof(buffer)) != 0){
 		write(client_fd, "+PONG\r\n", sizeof("+PONG\r\n"));
 	}
-
+	
 	printf("Client connected\n");
 	
 	
