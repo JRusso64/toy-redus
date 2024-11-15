@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <unistd.h>
 
+#define BUFFER_SIZE 1024
+
 int main() {
 	// Disable output buffering
 	setbuf(stdout, NULL);
@@ -55,14 +57,12 @@ int main() {
 	
 	int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 
-	char buffer[1024];
-	while(read(client_fd, buffer, sizeof(buffer)) != 0){
+	char buffer[BUFFER_SIZE];
+	while(read(client_fd, buffer, BUFFER_SIZE) != 0){
 		send(client_fd, "+PONG\r\n", sizeof("+PONG\r\n"), 0);
 	}
 	
 	printf("Client connected\n");
-	
-	
 
 	close(server_fd);
 
