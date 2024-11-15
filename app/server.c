@@ -6,8 +6,18 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define BUFFER_SIZE 1024
+
+void* handle_client(int client_fd){
+	char buffer[BUFFER_SIZE];
+	char *message = "+PONG\r\n";
+	while(read(client_fd, buffer, 1024)) {
+    	send(client_fd, message, strlen(message), 0);
+	}
+	return NULL;
+}
 
 int main() {
 	// Disable output buffering
@@ -54,14 +64,40 @@ int main() {
 	
 	printf("Waiting for a client to connect...\n");
 	client_addr_len = sizeof(client_addr);
-	
-	int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 
-	char buffer[BUFFER_SIZE];
-	char *message = "+PONG\r\n";
-	while (read(client_fd, buffer, 1024)) {
-    	send(client_fd, message, strlen(message), 0);
-  	}	
+
+	pthread_t* threads = NULL;
+	int* thread_args = NULL;
+	int thread_count = 0;
+	int max_threads = 2;
+	pthread_t thread_id;
+
+	threads = malloc(max_threads * sizeof(pthread_t));
+	thread_args = malloc(max_threads * sizeof(int));
+	while(1){
+		if(thread_count == max_threads){
+			max_threads *= 2;
+			threads = realloc(threads, max_threads * sizeof(pthread_t));
+			thread_args = realloc(thread_args, max_threads * sizeof(int));
+			if(!threads || !thread_args){
+				perror("Failed to reallocate memory");
+				return 1;
+			}
+		}
+		int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+		thread_args[thread_count] = client_fd;
+		pthread_create(&thread_id, NULL, handle_client, client_fd)
+		thread_count++;
+		if(thread_count >= 5) break;
+	}
+
+	for (int i = 0; i < thread_count; i++){
+		pthread_join(threads[i], NULL);
+	}
+
+	free(threads);
+	free(thread_args);
+
 	printf("Client connected\n");
 
 	close(server_fd);
