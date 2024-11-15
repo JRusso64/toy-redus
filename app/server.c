@@ -11,7 +11,7 @@
 #define BUFFER_SIZE 1024
 
 void* handle_client(void* client_fd_ptr){
-	int client_fd = *((int*)client_fd_ptr)
+	int client_fd = *((int*)client_fd_ptr);
 	char buffer[BUFFER_SIZE];
 	char *message = "+PONG\r\n";
 	while(read(client_fd, buffer, 1024)) {
