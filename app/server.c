@@ -57,7 +57,7 @@ int main() {
 
 	char buffer[1024];
 	while(read(client_fd, buffer, sizeof(buffer)) != 0){
-		write(client_fd, "+PONG\r\n", sizeof("+PONG\r\n"));
+		send(client_fd, "+PONG\r\n", sizeof("+PONG\r\n"), 0);
 	}
 	
 	printf("Client connected\n");
