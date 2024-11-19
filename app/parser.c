@@ -1,28 +1,7 @@
 #include "parser.h"
 #include <string.h>
 
-
 #define BUFFER_SIZE 1024
-
-
-// RESP Object struct
-// Holds parsed RESP data
-typedef struct {
-    RESPType type;
-    union {
-        char *simple_string;
-        char *error_message;
-        long long integer_value;
-        struct {
-            char *string_data;
-            size_t length;
-        } bulk_string;
-        struct {
-            void **elements;
-            size_t count;
-        } array;
-    }
-} RESPObject;
 
 long long parse_integer(const char **input){
     char *endptr;
