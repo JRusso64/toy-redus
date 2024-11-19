@@ -20,7 +20,7 @@ void* handle_client(void* client_fd_ptr){
 		RESPObject* command = parser(buffer);
 		if(!command){
 			const char* error_message = "-ERR Invalid command\r\n";
-			send(client_fd, error_message, sizof(error_message),0);
+			send(client_fd, error_message, sizeof(error_message),0);
 			continue;
 		}
 		
@@ -37,8 +37,8 @@ void* handle_client(void* client_fd_ptr){
 				send(client_fd, response, sizeof(response), 0);
 			}
 		}
+		free_resp_object(command);
 	}
-	free_resp_object(command);
 	close(client_fd);
 	return NULL;
 }
