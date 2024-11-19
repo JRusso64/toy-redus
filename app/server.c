@@ -7,16 +7,38 @@
 #include <errno.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <parser.h>
 
 #define BUFFER_SIZE 1024
 
 void* handle_client(void* client_fd_ptr){
 	int client_fd = *((int*)client_fd_ptr);
+	free(client_fd_ptr);
 	char buffer[BUFFER_SIZE];
-	char *message = "+PONG\r\n";
-	while(read(client_fd, buffer, 1024)) {
-    	send(client_fd, message, strlen(message), 0);
+
+	while(read(client_fd, buffer, 1024) > 0) {
+		RESPObject* command = parser(buffer);
+		if(!command){
+			const char* error_message = "-ERR Invalid command\r\n";
+			send(client_fd, error_message, 0);
+			continue;
+		}
+		
+		// Logic for handling commands
+		if(command->type == RESP_ARRAY && command->array.count > 0){
+			RESPObject *first_arg = command->array.elements[0];
+			// Handle ping command
+			if(first_arg->type == RESP_BULK_STRING && strcmp(first_arg->bulk_string.string_data, "PING") == 0){
+				const char* pong_msg = "+PONG\r\n";
+				send(client_fd, pong_msg, 0);
+			//Handle echo command
+			} else if(first_arg->type == RESP_BULK_STRING && strcmp(first_arg->bulk_string.string_data, "ECHO") == 0){
+				char response[BUFFER_SIZE];
+				send(client_fd, response, 0);
+			}
+		}
 	}
+	free(command);
 	close(client_fd);
 	return NULL;
 }
