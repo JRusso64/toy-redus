@@ -4,15 +4,6 @@
 
 #define BUFFER_SIZE 1024
 
-// Enum for RESP data types
-typedef enum {
-    RESP_SIMPLE_STRING,
-    RESP_ERROR,
-    RESP_INTEGER,
-    RESP_BULK_STRING,
-    RESP_ARRAY,
-    RESP_INVALID
-} RESPType;
 
 // RESP Object struct
 // Holds parsed RESP data
