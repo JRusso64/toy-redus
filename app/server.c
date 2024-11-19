@@ -38,7 +38,7 @@ void* handle_client(void* client_fd_ptr){
 			}
 		}
 	}
-	free(command);
+	free_resp_object(command);
 	close(client_fd);
 	return NULL;
 }
