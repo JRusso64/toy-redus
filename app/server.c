@@ -34,6 +34,7 @@ void* handle_client(void* client_fd_ptr){
 			//Handle echo command
 			} else if(first_arg->type == RESP_BULK_STRING && strcmp(first_arg->bulk_string.string_data, "ECHO") == 0){
 				char response[BUFFER_SIZE];
+				snprintf(response, BUFFER_SIZE, "+%s\r\n", second_arg->bulk_string.string_data);
 				send(client_fd, response, sizeof(response), 0);
 			}
 		}
