@@ -20,7 +20,7 @@ void* handle_client(void* client_fd_ptr){
 		RESPObject* command = parser(buffer);
 		if(!command){
 			const char* error_message = "-ERR Invalid command\r\n";
-			send(client_fd, error_message, 0);
+			send(client_fd, error_message, sizof(error_message),0);
 			continue;
 		}
 		
@@ -30,11 +30,11 @@ void* handle_client(void* client_fd_ptr){
 			// Handle ping command
 			if(first_arg->type == RESP_BULK_STRING && strcmp(first_arg->bulk_string.string_data, "PING") == 0){
 				const char* pong_msg = "+PONG\r\n";
-				send(client_fd, pong_msg, 0);
+				send(client_fd, pong_msg, sizeof(pong_msg), 0);
 			//Handle echo command
 			} else if(first_arg->type == RESP_BULK_STRING && strcmp(first_arg->bulk_string.string_data, "ECHO") == 0){
 				char response[BUFFER_SIZE];
-				send(client_fd, response, 0);
+				send(client_fd, response, sizeof(response), 0);
 			}
 		}
 	}
