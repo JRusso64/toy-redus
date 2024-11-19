@@ -7,7 +7,7 @@ long long parse_integer(const char **input){
     char *endptr;
     // Converts input from string to long integer
     // First arg is input second is output and third is base for conversion
-    long long value = strtoll(*input, &enptr, 10);
+    long long value = strtoll(*input, &endptr, 10);
     if(endptr == *input){
         fprintf(stderr, "Failed to convert to integer");
         return -1;
@@ -23,7 +23,7 @@ RESPObject *parse_bulk_string(const char **input){
 
     long long length = parse_integer(input);
 
-    if(**input == '\r' and *(*input + 1) == '\n'){
+    if(**input == '\r' && *(*input + 1) == '\n'){
        *input += 2;
     }else{
         return NULL;
@@ -34,7 +34,7 @@ RESPObject *parse_bulk_string(const char **input){
     string_data[length] = '\0';
     *input += length;
 
-    if(**input == '\r' and *(*input + 1) == '\n'){
+    if(**input == '\r' && *(*input + 1) == '\n'){
        *input += 2;
     }else{
         return NULL;
@@ -54,7 +54,7 @@ RESPObject *parse_array(const char **input){
     long long count = parse_integer(input);
     // If size of array is -1 then it is a null array
     if(count == -1){
-        if(**input == '\r' and *(*input + 1) == '\n'){
+        if(**input == '\r' && *(*input + 1) == '\n'){
             *input += 2;
             RESPObject *obj = malloc(sizeof(RESPObject));
             obj->type = RESP_BULK_STRING;
@@ -66,7 +66,7 @@ RESPObject *parse_array(const char **input){
     }
 
     // Skip the delimeter
-    if(**input == '\r' and *(*input + 1) == '\n'){
+    if(**input == '\r' && *(*input + 1) == '\n'){
         *input += 2;
     }
 
